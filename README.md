@@ -1,3 +1,4 @@
+For a Raspberry Pi
 the idea is to report the current open/close state of the door 
 
 if there's a change in state then log and notify
