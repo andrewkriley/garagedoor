@@ -24,7 +24,7 @@ def writeStatus():
         return
 
 def notify(statusVerbose):
-	smsRecipient = '+61402894793'
+	smsRecipient = 'your mobile here'
 	smsInputMessage = statusVerbose
 	send_sms.clickatelSMS(smsRecipient, smsInputMessage)
 	return
