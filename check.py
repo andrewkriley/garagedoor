@@ -1,5 +1,10 @@
 import logging    
 import RPi.GPIO as GPIO
+import imp
+
+#notify = imp.load_source('module.name', '/.py')
+
+
 GPIO.setmode(GPIO.BCM)
 
 # GPIO 23 set up as input. It is pulled up to stop false signals  
@@ -22,15 +27,17 @@ GPIO.input(23)
 print GPIO.input(23)
 
 if GPIO.input(23):
-    print('Garage is currently Open')
+    statusVerbose = 'Garage is currently Open'
     status = 'open'
     writeStatus()
-    logging.info('Garage is currently Open')
+    print(statusVerbose)
+    logging.info(statusVerbose)
 else:
-    print('Garage is currently Closed')
+    statusVerbose = 'Garage is currently Closed'
     status = 'closed'
     writeStatus()
-    logging.info('Garage is currently Closed')
+    print(statusVerbose)
+    logging.info(statusVerbose)
 
 print 'Waiting for status change'
 
@@ -38,16 +45,18 @@ print 'Waiting for status change'
 var = 1 
 while var == 1 :
 	GPIO.wait_for_edge(23, GPIO.RISING)
-	print "\nDoor Open"
-	status = 'open'
-	writeStatus()
-	logging.info('Garage is now Open')
+	statusVerbose = 'Garage has just Opened'
+    	status = 'open'
+    	writeStatus()
+    	print(statusVerbose)
+    	logging.info(statusVerbose)
 
 	GPIO.wait_for_edge(23, GPIO.FALLING)
-	print "\nDoor Closed"
-	status = 'closed'
-	writeStatus()
-	logging.info('Garage is now Closed')
+	statusVerbose = 'Garage has just Opened'
+        status = 'open'
+        writeStatus()
+        print(statusVerbose)
+        logging.info(statusVerbose)
 
 GPIO.cleanup()           # clean up GPIO on normal exit  
 
