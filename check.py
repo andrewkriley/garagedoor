@@ -1,9 +1,10 @@
 import logging    
 import RPi.GPIO as GPIO
-import imp
+import send_sms
 
 #notify = imp.load_source('module.name', '/.py')
 
+GPIO.cleanup() 
 
 GPIO.setmode(GPIO.BCM)
 
@@ -22,6 +23,54 @@ def writeStatus():
         f.close
         return
 
+def notify(statusVerbose):
+	smsRecipient = '+61402894793'
+	smsInputMessage = statusVerbose
+	send_sms.clickatelSMS(smsRecipient, smsInputMessage)
+	return
+
+def doorStartsOpen():
+	print 'Door starts Open'
+	var = 1
+	while var == 1 :
+    		GPIO.wait_for_edge(23, GPIO.FALLING)
+        	statusVerbose = 'Garage has just Closed'
+        	status = 'closed'
+        	writeStatus()
+        	print(statusVerbose)
+        	logging.info(statusVerbose)
+#        	notify(statusVerbose)
+	
+        	GPIO.wait_for_edge(23, GPIO.RISING)
+        	statusVerbose = 'Garage has just Opened'
+        	status = 'open'
+        	writeStatus()
+        	print(statusVerbose)
+        	logging.info(statusVerbose)
+#        	notify(statusVerbose)
+	return(status,statusVerbose)
+
+def doorStartsClosed():
+	print 'Door starts Closed'
+	var = 1
+        while var == 1 :
+                GPIO.wait_for_edge(23, GPIO.RISING)
+                statusVerbose = 'Garage has just Opened'
+                status = 'open'
+                writeStatus()
+                print(statusVerbose)
+                logging.info(statusVerbose)
+#                notify(statusVerbose)
+        
+                GPIO.wait_for_edge(23, GPIO.FALLING)
+                statusVerbose = 'Garage has just Closed'
+                status = 'closed'
+                writeStatus()
+                print(statusVerbose)
+                logging.info(statusVerbose)
+#                notify(statusVerbose)
+	return(status,statusVerbose)
+
 #Check and write current status of door
 GPIO.input(23)
 print GPIO.input(23)
@@ -32,31 +81,38 @@ if GPIO.input(23):
     writeStatus()
     print(statusVerbose)
     logging.info(statusVerbose)
+    notify(statusVerbose)
+    doorStartsOpen()
 else:
     statusVerbose = 'Garage is currently Closed'
     status = 'closed'
     writeStatus()
     print(statusVerbose)
     logging.info(statusVerbose)
+    notify(statusVerbose)
+    doorStartsClosed()
 
 print 'Waiting for status change'
 
+# BASIC DOOR CHECK
 #run interrupt 'while' to track door status changes
-var = 1 
-while var == 1 :
-	GPIO.wait_for_edge(23, GPIO.RISING)
-	statusVerbose = 'Garage has just Opened'
-    	status = 'open'
-    	writeStatus()
-    	print(statusVerbose)
-    	logging.info(statusVerbose)
-
-	GPIO.wait_for_edge(23, GPIO.FALLING)
-	statusVerbose = 'Garage has just Opened'
-        status = 'open'
-        writeStatus()
-        print(statusVerbose)
-        logging.info(statusVerbose)
+#var = 1 
+#while var == 1 :
+#	GPIO.wait_for_edge(23, GPIO.RISING)
+#	statusVerbose = 'Garage has just Opened'
+#    	status = 'open'
+#    	writeStatus()
+#    	print(statusVerbose)
+#    	logging.info(statusVerbose)
+#	notify(statusVerbose)
+#
+#	GPIO.wait_for_edge(23, GPIO.FALLING)
+#	statusVerbose = 'Garage has just Closed'
+#        status = 'closed'
+#        writeStatus()
+#        print(statusVerbose)
+#        logging.info(statusVerbose)
+#	notify(statusVerbose)
 
 GPIO.cleanup()           # clean up GPIO on normal exit  
 
